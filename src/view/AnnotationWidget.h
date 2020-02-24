@@ -12,6 +12,9 @@ namespace waft::view {
 class AnnotationWidget : public util::AspectRatioPixmapLabel {
  public:
   explicit AnnotationWidget(const QPixmap &pixmap, QWidget *parent = nullptr);
+  [[nodiscard]]  inline model::Ellipse ellipse() const {
+	return ellipse_;
+  }
 
  protected:
   void paintEvent(QPaintEvent *event) override;
@@ -20,6 +23,7 @@ class AnnotationWidget : public util::AspectRatioPixmapLabel {
   void wheelEvent(QWheelEvent *event) override;
 
  private:
+  [[nodiscard]] QRect getImageRect() const;
   void _handleMouse(QMouseEvent *event);
 
   model::Ellipse ellipse_;

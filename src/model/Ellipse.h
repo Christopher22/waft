@@ -19,26 +19,26 @@ class Ellipse {
   bool setPosition(float x, float y) noexcept;
   bool setRotation(float rotation) noexcept;
 
-  void draw(QPaintDevice *painting_area, const QPen &pen) const;
+  void draw(QPaintDevice *painting_area, const QPen &pen, const QRect &roi = QRect()) const;
 
   inline bool setPosition(const QPointF &point) noexcept {
-    return setPosition(point.x(), point.y());
+	return setPosition(point.x(), point.y());
   }
 
   inline void setAxes(const QPointF &point) noexcept {
-    setAxes(point.x(), point.y());
+	setAxes(point.x(), point.y());
   }
 
   [[nodiscard]] inline QPointF position() const noexcept {
-    return QPointF(x_, y_);
+	return QPointF(x_, y_);
   }
 
   [[nodiscard]] inline QPointF axes() const noexcept {
-    return QPointF(mayor_, minor_);
+	return QPointF(mayor_, minor_);
   }
 
   [[nodiscard]] inline float rotation() const noexcept {
-    return rotation_;
+	return rotation_;
   }
 
  private:
