@@ -9,12 +9,18 @@
 
 #include <QFileInfo>
 #include <QPixmap>
+#include <QTextStream>
+#include <QDir>
 
 namespace waft::model {
 class Sample {
  public:
   explicit Sample(const QString &path);
   explicit operator bool() const;
+  void write(QTextStream &stream, const QDir &relative_path) const;
+  static void writeHeader(QTextStream &stream);
+
+  friend QTextStream &operator<<(QTextStream &stream, const Sample &sample);
 
   [[nodiscard]] inline const QFileInfo &file() const noexcept {
 	return path_;
@@ -25,6 +31,10 @@ class Sample {
   }
 
   [[nodiscard]] inline const Ellipse &ellipse() const noexcept {
+	return ellipse_;
+  }
+
+  [[nodiscard]] inline Ellipse &ellipse() noexcept {
 	return ellipse_;
   }
 

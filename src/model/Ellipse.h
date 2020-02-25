@@ -40,7 +40,6 @@ class Ellipse {
   [[nodiscard]] inline float rotation() const noexcept {
 	return rotation_;
   }
-
  private:
   float x_, y_, mayor_, minor_, rotation_;
 };

@@ -14,4 +14,20 @@ Sample::operator bool() const {
   return !image_.isNull();
 }
 
+QTextStream &operator<<(QTextStream &stream, const Sample &sample) {
+  sample.write(stream, sample.file().dir());
+  return stream;
+}
+
+void Sample::write(QTextStream &stream, const QDir &parent) const {
+  const QString relative_file = parent.relativeFilePath(this->path_.absoluteFilePath());
+  const QPointF axes = this->ellipse_.axes(), position = this->ellipse_.position();
+  stream << relative_file << '\t' << position.x() << '\t' << position.y() << '\t' << axes.x() << '\t'
+		 << axes.y() << "\t" << this->ellipse_.rotation() << '\n';
+}
+
+void Sample::writeHeader(QTextStream &stream) {
+  stream << "file\tx\ty\tmajor\tminor\trotation\n";
+}
+
 }
