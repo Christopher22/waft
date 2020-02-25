@@ -6,13 +6,13 @@
 
 namespace waft::view::util {
 AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
-    QLabel(parent) {
+	QLabel(parent) {
   this->setMinimumSize(1, 1);
   this->setScaledContents(false);
 }
 
 AspectRatioPixmapLabel::AspectRatioPixmapLabel(const QPixmap &pixmap, QWidget *parent)
-    : AspectRatioPixmapLabel(parent) {
+	: AspectRatioPixmapLabel(parent) {
   AspectRatioPixmapLabel::setPixmap(pixmap);
 }
 
@@ -22,7 +22,7 @@ void AspectRatioPixmapLabel::setPixmap(const QPixmap &p) {
 }
 
 int AspectRatioPixmapLabel::heightForWidth(int width) const {
-  return pixmap_.isNull() ? this->height() : int(((qreal) pixmap_.height() * width) / pixmap_.width());
+  return pixmap_.isNull() ? this->height() : int(((qreal)pixmap_.height() * width) / pixmap_.width());
 }
 
 QSize AspectRatioPixmapLabel::sizeHint() const {
@@ -36,9 +36,9 @@ QPixmap AspectRatioPixmapLabel::scaledPixmap() const {
   return scaled;
 }
 
-void AspectRatioPixmapLabel::resizeEvent(QResizeEvent *e) {
+void AspectRatioPixmapLabel::resizeEvent(QResizeEvent *) {
   if (!pixmap_.isNull()) {
-    QLabel::setPixmap(this->scaledPixmap());
+	QLabel::setPixmap(this->scaledPixmap());
   }
 }
 
