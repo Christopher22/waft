@@ -14,7 +14,7 @@ namespace waft::view {
 AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
 	: QWizardPage(parent),
 	  sample_(sample),
-	  annotation_widget_(new AnnotationWidget(sample.frame(), this)),
+	  annotation_widget_(new AnnotationWidget(sample, this)),
 	  next_id_(std::numeric_limits<int>::min()) {
   this->setTitle(QString("Please annotate '%1': ").arg(sample.file().fileName()));
 
@@ -41,8 +41,8 @@ void AnnotationPage::setNextId(int id) {
   this->setFinalPage(next_id_ == -1);
 }
 
-model::Ellipse AnnotationPage::ellipse() const {
-  return annotation_widget_->ellipse();
+const model::Sample &AnnotationPage::sample() const {
+  return annotation_widget_->sample();
 }
 
 }

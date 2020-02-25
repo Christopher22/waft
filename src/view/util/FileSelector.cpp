@@ -10,9 +10,10 @@
 
 namespace waft::view::util {
 
-FileSelector::FileSelector(QString description, QString filter, bool for_saving, QWidget *parent)
+FileSelector::FileSelector(QString description, QString filter, bool for_saving, QString root, QWidget *parent)
 	: QWidget(parent),
 	  path_(new QComboBox(this)),
+	  root_dir_(std::move(root)),
 	  description_(std::move(description)),
 	  filter_(std::move(filter)),
 	  for_saving_(for_saving) {
@@ -34,8 +35,8 @@ FileSelector::FileSelector(QString description, QString filter, bool for_saving,
 
 void FileSelector::_selectPath() {
   const QString file_name = for_saving_ ?
-							QFileDialog::getSaveFileName(this, description_, QString(), filter_) :
-							QFileDialog::getOpenFileName(this, description_, QString(), filter_);
+							QFileDialog::getSaveFileName(this, description_, root_dir_, filter_, nullptr, options_) :
+							QFileDialog::getOpenFileName(this, description_, root_dir_, filter_, nullptr, options_);
 
   if (file_name.isEmpty()) {
 	return;
@@ -67,6 +68,14 @@ void FileSelector::setPath(const QString &path) {
   QFileInfo info(path);
   path_->addItem(info.fileName(), path);
   path_->setCurrentIndex(path_->count() - 1);
+}
+
+void FileSelector::setRoot(const QString &root) {
+  root_dir_ = root;
+}
+
+QFileDialog::Options *FileSelector::operator->() {
+  return &options_;
 }
 
 }

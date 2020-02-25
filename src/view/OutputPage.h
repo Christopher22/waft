@@ -10,13 +10,20 @@
 
 namespace waft::view {
 class AnnotationPage;
+namespace util {
+class FileSelector;
+}
 
 class OutputPage : public QWizardPage, public QVector<AnnotationPage *> {
  Q_OBJECT
 
  public:
   explicit OutputPage(QWidget *parent = nullptr);
+  bool validatePage() override;
   [[nodiscard]] int nextId() const override;
+  void initializePage() override;
+ private:
+  util::FileSelector *file_;
 };
 }
 

@@ -9,14 +9,17 @@
 
 namespace waft::view {
 
-AnnotationWidget::AnnotationWidget(const QPixmap &pixmap, QWidget *parent) : AspectRatioPixmapLabel(pixmap, parent),
-																			 ellipse_pen_(QColor(255, 59, 48)) {
+AnnotationWidget::AnnotationWidget(const model::Sample &sample, QWidget *parent) : AspectRatioPixmapLabel(sample
+																											  .frame(),
+																										  parent),
+																				   sample_(sample),
+																				   ellipse_pen_(QColor(255, 59, 48)) {
 
 }
 
 void AnnotationWidget::paintEvent(QPaintEvent *event) {
   AspectRatioPixmapLabel::paintEvent(event);
-  ellipse_.draw(this, ellipse_pen_, this->getImageRect());
+  sample_.ellipse().draw(this, ellipse_pen_, this->getImageRect());
 }
 
 void AnnotationWidget::mousePressEvent(QMouseEvent *ev) {
@@ -35,8 +38,8 @@ void AnnotationWidget::_handleMouse(QMouseEvent *event) {
   const QRect image_size = this->getImageRect();
   const QPointF local_pos = event->localPos() - image_size.topLeft();
   if (local_pos.x() <= image_size.width() && local_pos.y() <= image_size.height()) {
-	ellipse_.setPosition(float(local_pos.x()) / float(image_size.width()),
-						 float(local_pos.y()) / float(image_size.height()));
+	sample_.ellipse().setPosition(float(local_pos.x()) / float(image_size.width()),
+								  float(local_pos.y()) / float(image_size.height()));
 	this->update();
   }
 }
@@ -47,7 +50,7 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
   const Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
 
   if (modifiers.testFlag(Qt::ShiftModifier) || modifiers.testFlag(Qt::ControlModifier)) {
-	QPointF axes = ellipse_.axes();
+	QPointF axes = sample_.ellipse().axes();
 	const QSize size = this->pixmap()->size();
 	const float reference = std::max(size.width(), size.height());
 
@@ -61,13 +64,13 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
 	  axes.setY(axes.y() + (float(change) / reference));
 	}
 
-	ellipse_.setAxes(axes);
+	sample_.ellipse().setAxes(axes);
   } else {
-	int new_value = int(ellipse_.rotation()) + change;
+	int new_value = int(sample_.ellipse().rotation()) + change;
 	if (new_value < 0) {
 	  new_value += 360;
 	}
-	ellipse_.setRotation(float(new_value % 360));
+	sample_.ellipse().setRotation(float(new_value % 360));
   }
 
   this->update();

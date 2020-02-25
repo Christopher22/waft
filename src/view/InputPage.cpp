@@ -93,7 +93,7 @@ void InputPage::_onLoadedSample(const model::Sample &sample) {
 void InputPage::_onFailedSample(const model::Sample &sample) {
   QMessageBox::warning(this,
 					   "Unable to load sample",
-					   QString("An error occurred while trying to load '%1'.").arg(sample.file().absolutePath()));
+					   QString("An error occurred while trying to load '%1'.").arg(sample.file().absoluteFilePath()));
 }
 
 void InputPage::_onDone() {

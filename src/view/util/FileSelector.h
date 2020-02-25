@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <QFileDialog>
 
 namespace waft::view::util {
 class FileSelector : public QWidget {
@@ -21,10 +22,16 @@ class FileSelector : public QWidget {
 				 NOTIFY
 				 pathSelected)
 
-  FileSelector(QString description, QString filter, bool for_saving, QWidget *parent = nullptr);
+  FileSelector(QString description,
+			   QString filter,
+			   bool for_saving = false,
+			   QString root = QString(),
+			   QWidget *parent = nullptr);
   [[nodiscard]] QString path() const;
   void setPath(const QString &path);
+  void setRoot(const QString &root);
   explicit operator bool() const;
+  QFileDialog::Options *operator->();
 
  signals:
   void pathSelected(QString path);
@@ -34,8 +41,10 @@ class FileSelector : public QWidget {
   void _onSelectionChange(int index);
 
   QComboBox *path_;
+  QString root_dir_;
   const QString description_, filter_;
   const bool for_saving_;
+  QFileDialog::Options options_;
 };
 }
 

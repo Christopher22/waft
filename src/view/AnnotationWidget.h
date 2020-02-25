@@ -6,14 +6,14 @@
 #define WAFT_SRC_VIEW_ANNOTATIONWIDGET_H_
 
 #include "util/AspectRatioPixmapLabel.h"
-#include "../model/Ellipse.h"
+#include "../model/Sample.h"
 
 namespace waft::view {
 class AnnotationWidget : public util::AspectRatioPixmapLabel {
  public:
-  explicit AnnotationWidget(const QPixmap &pixmap, QWidget *parent = nullptr);
-  [[nodiscard]] inline model::Ellipse ellipse() const {
-	return ellipse_;
+  explicit AnnotationWidget(const model::Sample &sample, QWidget *parent = nullptr);
+  [[nodiscard]] const model::Sample &sample() const {
+	return sample_;
   }
 
  protected:
@@ -26,7 +26,7 @@ class AnnotationWidget : public util::AspectRatioPixmapLabel {
   [[nodiscard]] QRect getImageRect() const;
   void _handleMouse(QMouseEvent *event);
 
-  model::Ellipse ellipse_;
+  model::Sample sample_;
   QPen ellipse_pen_;
 };
 }

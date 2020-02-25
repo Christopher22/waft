@@ -17,7 +17,7 @@ class AnnotationPage : public QWizardPage {
  public:
   explicit AnnotationPage(const model::Sample &sample, QWidget *parent = nullptr);
   void setNextId(int id);
-  [[nodiscard]] model::Ellipse ellipse() const;
+  [[nodiscard]] const model::Sample &sample() const;
 
   [[nodiscard]] int nextId() const override;
   void initializePage() override;
