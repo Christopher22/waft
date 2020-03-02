@@ -19,7 +19,8 @@ class Ellipse {
   bool setPosition(float x, float y) noexcept;
   bool setRotation(float rotation) noexcept;
 
-  void draw(QPaintDevice *painting_area, const QPen &pen, const QRect &roi = QRect()) const;
+  void draw(QPaintDevice *painting_area, const QPen &pen, const QPen &major_pen,
+			const QPen &minor_pen, const QRect &roi = QRect()) const;
 
   inline bool setPosition(const QPointF &point) noexcept {
 	return setPosition(point.x(), point.y());

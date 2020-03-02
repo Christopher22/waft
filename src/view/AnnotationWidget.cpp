@@ -13,13 +13,16 @@ AnnotationWidget::AnnotationWidget(const model::Sample &sample, QWidget *parent)
 																											  .frame(),
 																										  parent),
 																				   sample_(sample),
-																				   ellipse_pen_(QColor(255, 59, 48)) {
+																				   ellipse_pen_(QColor(255, 59, 48)),
+																				   major_pen_(QColor(255, 59, 48)),
+																				   minor_pen_(QColor(255, 59, 48)) {
 
+  minor_pen_.setStyle(Qt::DashLine);
 }
 
 void AnnotationWidget::paintEvent(QPaintEvent *event) {
   AspectRatioPixmapLabel::paintEvent(event);
-  sample_.ellipse().draw(this, ellipse_pen_, this->getImageRect());
+  sample_.ellipse().draw(this, ellipse_pen_, major_pen_, minor_pen_, this->getImageRect());
 }
 
 void AnnotationWidget::mousePressEvent(QMouseEvent *ev) {

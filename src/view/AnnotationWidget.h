@@ -27,7 +27,7 @@ class AnnotationWidget : public util::AspectRatioPixmapLabel {
   void _handleMouse(QMouseEvent *event);
 
   model::Sample sample_;
-  QPen ellipse_pen_;
+  QPen ellipse_pen_, major_pen_, minor_pen_;
 };
 }
 

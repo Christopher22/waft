@@ -42,7 +42,11 @@ bool Ellipse::setRotation(float rotation) noexcept {
   return true;
 }
 
-void Ellipse::draw(QPaintDevice *painting_area, const QPen &pen, const QRect &roi) const {
+void Ellipse::draw(QPaintDevice *painting_area,
+				   const QPen &pen,
+				   const QPen &major_pen,
+				   const QPen &minor_pen,
+				   const QRect &roi) const {
   QPainter painter(painting_area);
   painter.setPen(pen);
   painter.setRenderHint(QPainter::Antialiasing);
@@ -62,6 +66,12 @@ void Ellipse::draw(QPaintDevice *painting_area, const QPen &pen, const QRect &ro
 					  y - minor_size,
 					  mayor_size * 2,
 					  minor_size * 2);
+
+  painter.setPen(major_pen);
+  painter.drawLine(x, y, x + mayor_size, y);
+
+  painter.setPen(minor_pen);
+  painter.drawLine(x, y, x, y + minor_size);
 }
 
 }
