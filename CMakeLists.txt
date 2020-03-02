@@ -23,18 +23,12 @@ IF (WIN32)
     get_filename_component(Qt_Bin_Dir "${QMake_Executable}" DIRECTORY)
     find_program(Win_Deploy_Executable windeployqt HINTS "${Qt_Bin_Dir}")
 
-    IF (CMAKE_BUILD_TYPE MATCHES DEBUG)
-        set(Deploy_Config --debug)
-    ELSE ()
-        set(Deploy_Config --release)
-    ENDIF ()
-
     add_custom_command(TARGET waft POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
             env PATH="${Qt_Bin_Dir}" "${Win_Deploy_Executable}"
             --verbose 0
             --no-compiler-runtime
-            ${Deploy_Config}
+            $<IF:$<CONFIG:Debug>,--debug,--release>
             \"$<TARGET_FILE:waft>\"
             COMMENT "Deploying Qt..."
             )
