@@ -6,45 +6,46 @@
 
 #include <QMouseEvent>
 #include <QGuiApplication>
+#include <QDebug>
+
+#include <utility>
 
 namespace waft::view {
 
-AnnotationWidget::AnnotationWidget(const model::Sample &sample, QWidget *parent) : AspectRatioPixmapLabel(sample
-																											  .frame(),
-																										  parent),
-																				   sample_(sample),
-																				   ellipse_pen_(QColor(255, 59, 48)),
-																				   major_pen_(QColor(255, 59, 48)),
-																				   minor_pen_(QColor(255, 59, 48)) {
+AnnotationWidget::AnnotationWidget(model::Sample sample, QWidget *parent) : QLabel(parent),
+																			sample_(std::move(sample)),
+																			ellipse_pen_(QColor(255, 59, 48)),
+																			major_pen_(QColor(255, 59, 48)),
+																			minor_pen_(QColor(255, 59, 48)) {
+
+  this->setScaledContents(true);
+  this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+  this->setMinimumSize(sample.frame().size());
+  this->setPixmap(sample.frame());
 
   minor_pen_.setStyle(Qt::DashLine);
 }
 
 void AnnotationWidget::paintEvent(QPaintEvent *event) {
-  AspectRatioPixmapLabel::paintEvent(event);
-  sample_.ellipse().draw(this, ellipse_pen_, major_pen_, minor_pen_, this->getImageRect());
+  QLabel::paintEvent(event);
+  sample_.ellipse().draw(this, ellipse_pen_, major_pen_, minor_pen_);
 }
 
 void AnnotationWidget::mousePressEvent(QMouseEvent *ev) {
-  AspectRatioPixmapLabel::mousePressEvent(ev);
   this->_handleMouse(ev);
 }
 
 void AnnotationWidget::mouseMoveEvent(QMouseEvent *ev) {
-  AspectRatioPixmapLabel::mouseMoveEvent(ev);
   if (ev->buttons().testFlag(Qt::LeftButton)) {
 	this->_handleMouse(ev);
   }
 }
 
 void AnnotationWidget::_handleMouse(QMouseEvent *event) {
-  const QRect image_size = this->getImageRect();
-  const QPointF local_pos = event->localPos() - image_size.topLeft();
-  if (local_pos.x() <= image_size.width() && local_pos.y() <= image_size.height()) {
-	sample_.ellipse().setPosition(float(local_pos.x()) / float(image_size.width()),
-								  float(local_pos.y()) / float(image_size.height()));
-	this->update();
-  }
+  const QPointF local_pos = event->localPos();
+  sample_.ellipse().setPosition(float(local_pos.x()) / float(this->width()),
+								float(local_pos.y()) / float(this->height()));
+  this->update();
 }
 
 void AnnotationWidget::wheelEvent(QWheelEvent *event) {
@@ -59,12 +60,14 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
 
 	// Handle the mayor axis
 	if (modifiers.testFlag(Qt::ShiftModifier)) {
-	  axes.setX(axes.x() + (float(change) / reference));
+	  double new_x = axes.x() + (float(change) / reference);
+	  axes.setX(std::max(new_x, 0.001));
 	}
 
 	// Handle the minor axis
 	if (modifiers.testFlag(Qt::ControlModifier)) {
-	  axes.setY(axes.y() + (float(change) / reference));
+	  double new_y = axes.y() + (float(change) / reference);
+	  axes.setY(std::max(new_y, 0.001));
 	}
 
 	sample_.ellipse().setAxes(axes);
@@ -78,13 +81,6 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
 
   this->update();
   event->accept();
-}
-
-QRect AnnotationWidget::getImageRect() const {
-  const QSize image_size = this->pixmap()->size(), widget_size = this->size();
-  return image_size != widget_size ?
-		 QRect(0, (widget_size.height() - image_size.height()) / 2, image_size.width(), image_size.height()) :
-		 QRect(0, 0, widget_size.width(), widget_size.height());
 }
 
 }

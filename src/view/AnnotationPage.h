@@ -9,8 +9,11 @@
 #include <QWizardPage>
 
 namespace waft::view {
-class AnnotationWidget;
+namespace util {
+class AspectRatioWidget;
+}
 
+class AnnotationWidget;
 class AnnotationPage : public QWizardPage {
  Q_OBJECT
 
@@ -24,7 +27,7 @@ class AnnotationPage : public QWizardPage {
 
  private:
   model::Sample sample_;
-  AnnotationWidget *annotation_widget_;
+  util::AspectRatioWidget *annotation_widget_;
   int next_id_;
 };
 }

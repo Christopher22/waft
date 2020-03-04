@@ -4,8 +4,11 @@
 
 #include "AnnotationPage.h"
 #include "AnnotationWidget.h"
+#include "util/AspectRatioWidget.h"
 
 #include <QVBoxLayout>
+#include <QKeyEvent>
+#include <QDebug>
 
 #include <limits>
 
@@ -14,7 +17,7 @@ namespace waft::view {
 AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
 	: QWizardPage(parent),
 	  sample_(sample),
-	  annotation_widget_(new AnnotationWidget(sample, this)),
+	  annotation_widget_(new util::AspectRatioWidget(new AnnotationWidget(sample, this), this)),
 	  next_id_(std::numeric_limits<int>::min()) {
   this->setTitle(tr("Annotation of '%1'").arg(sample.file().fileName()));
   this->setSubTitle(tr(
@@ -46,7 +49,7 @@ void AnnotationPage::setNextId(int id) {
 }
 
 const model::Sample &AnnotationPage::sample() const {
-  return annotation_widget_->sample();
+  return qobject_cast<AnnotationWidget *>(annotation_widget_->child())->sample();
 }
 
 }

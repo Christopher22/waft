@@ -45,16 +45,15 @@ bool Ellipse::setRotation(float rotation) noexcept {
 void Ellipse::draw(QPaintDevice *painting_area,
 				   const QPen &pen,
 				   const QPen &major_pen,
-				   const QPen &minor_pen,
-				   const QRect &roi) const {
+				   const QPen &minor_pen) const {
   QPainter painter(painting_area);
   painter.setPen(pen);
   painter.setRenderHint(QPainter::Antialiasing);
 
-  const QRect subregion = !roi.isEmpty() ? roi : QRect(0, 0, painting_area->width(), painting_area->height());
-  const float reference_size = std::max(subregion.width(), subregion.height());
-  const int x = subregion.x() + int(x_ * float(subregion.width()));
-  const int y = subregion.y() + int(y_ * float(subregion.height()));
+  const QSize size = QSize(painting_area->width(), painting_area->height());
+  const float reference_size = std::max(size.width(), size.height());
+  const int x = int(x_ * float(size.width()));
+  const int y = int(y_ * float(size.height()));
   const int mayor_size = int(mayor_ * reference_size);
   const int minor_size = int(minor_ * reference_size);
 

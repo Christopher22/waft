@@ -5,13 +5,15 @@
 #ifndef WAFT_SRC_VIEW_ANNOTATIONWIDGET_H_
 #define WAFT_SRC_VIEW_ANNOTATIONWIDGET_H_
 
-#include "util/AspectRatioPixmapLabel.h"
 #include "../model/Sample.h"
+#include <QLabel>
 
 namespace waft::view {
-class AnnotationWidget : public util::AspectRatioPixmapLabel {
+class AnnotationWidget : public QLabel {
+ Q_OBJECT
+
  public:
-  explicit AnnotationWidget(const model::Sample &sample, QWidget *parent = nullptr);
+  explicit AnnotationWidget(model::Sample sample, QWidget *parent = nullptr);
   [[nodiscard]] const model::Sample &sample() const {
 	return sample_;
   }
@@ -23,7 +25,6 @@ class AnnotationWidget : public util::AspectRatioPixmapLabel {
   void wheelEvent(QWheelEvent *event) override;
 
  private:
-  [[nodiscard]] QRect getImageRect() const;
   void _handleMouse(QMouseEvent *event);
 
   model::Sample sample_;
