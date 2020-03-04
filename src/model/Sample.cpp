@@ -68,6 +68,7 @@ void Sample::writeHeader(QTextStream &stream) {
   for (auto header: Sample::HEADERS) {
 	stream << header << Sample::SEPARATOR;
   }
+  stream << endl;
 }
 
 }
