@@ -4,6 +4,7 @@
 
 #include "FileSelector.h"
 
+#include <QComboBox>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QFileDialog>

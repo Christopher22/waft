@@ -12,7 +12,7 @@ namespace waft::model::samples {
 class Files : public Samples, public QStringList {
  public:
   explicit Files(QObject *parent = nullptr);
-  void load() override;
+  bool load() override;
 };
 }
 

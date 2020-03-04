@@ -2,8 +2,7 @@
 // Created by christopher on 24.02.2020.
 //
 
-#include "InputWidget.h"
-#include "../model/samples/Files.h"
+#include "FileList.h"
 
 #include <QDragEnterEvent>
 #include <QFileInfo>
@@ -11,45 +10,29 @@
 #include <QShortcut>
 #include <QFileDialog>
 
-namespace waft::view {
+namespace waft::view::util {
 
-InputWidget::InputWidget(QWidget *parent)
+FileList::FileList(QStringList supported_formats, QWidget *parent)
 	: QListWidget(parent),
-	  info_item_(new QListWidgetItem("Please drop files or double click here", this)),
-	  supported_format_(model::Samples::supportedFormats()),
-	  complete_(false) {
+	  info_item_(new QListWidgetItem(tr("Please drop files or double click here for a selection"), this)),
+	  supported_format_(std::move(supported_formats)),
+	  images_available_(false) {
   this->setAcceptDrops(true);
   this->setDragEnabled(true);
-
   this->setSelectionMode(QAbstractItemView::SingleSelection);
   this->setDropIndicatorShown(true);
   this->setDragDropMode(QAbstractItemView::InternalMove);
-
   this->setAlternatingRowColors(true);
+
+  // Disable selection of helper
+  info_item_->setFlags(Qt::ItemNeverHasChildren);
 
   // Enable deleting
   auto *shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), this, nullptr, nullptr, Qt::WidgetShortcut);
-  QObject::connect(shortcut, &QShortcut::activated, this, &InputWidget::_deleteCurrent);
+  QObject::connect(shortcut, &QShortcut::activated, this, &FileList::_deleteCurrent);
 }
 
-bool InputWidget::isComplete() const {
-  return complete_;
-}
-
-model::Samples *InputWidget::samples() {
-  if (!this->isComplete()) {
-	return nullptr;
-  }
-
-  auto *samples = new model::samples::Files(nullptr);
-  samples->reserve(this->count());
-  for (int row = 0, size = this->count(); row < size; ++row) {
-	samples->append(this->item(row)->data(Qt::UserRole).toString());
-  }
-  return samples;
-}
-
-void InputWidget::dragEnterEvent(QDragEnterEvent *event) {
+void FileList::dragEnterEvent(QDragEnterEvent *event) {
   if (event->mimeData()->hasUrls()) {
 	event->acceptProposedAction();
   } else {
@@ -57,7 +40,7 @@ void InputWidget::dragEnterEvent(QDragEnterEvent *event) {
   }
 }
 
-void InputWidget::dragMoveEvent(QDragMoveEvent *event) {
+void FileList::dragMoveEvent(QDragMoveEvent *event) {
   if (event->mimeData()->hasUrls()) {
 	event->acceptProposedAction();
   } else {
@@ -65,7 +48,7 @@ void InputWidget::dragMoveEvent(QDragMoveEvent *event) {
   }
 }
 
-void InputWidget::dropEvent(QDropEvent *event) {
+void FileList::dropEvent(QDropEvent *event) {
   if (event->mimeData()->hasUrls()) {
 	for (auto &url: event->mimeData()->urls()) {
 	  this->_addPath(url.toLocalFile());
@@ -75,7 +58,7 @@ void InputWidget::dropEvent(QDropEvent *event) {
   QListWidget::dropEvent(event);
 }
 
-bool InputWidget::_addPath(const QString &path) {
+bool FileList::_addPath(const QString &path) {
   QFileInfo file_info(path);
   if (!file_info.isFile() || !supported_format_.contains(file_info.suffix(), Qt::CaseInsensitive)) {
 	return false;
@@ -87,19 +70,19 @@ bool InputWidget::_addPath(const QString &path) {
 	info_item_ = nullptr;
   }
 
-  if (!complete_) {
-	complete_ = true;
-	emit this->completeChanged();
+  if (!images_available_) {
+	images_available_ = true;
+	emit this->fileAvailabilityChanged();
   }
 
   auto *item = new QListWidgetItem(file_info.fileName(), this);
   item->setData(Qt::UserRole, path);
 
-  emit this->samplesChanged();
+  emit this->filesChanged();
   return true;
 }
 
-void InputWidget::_deleteCurrent() {
+void FileList::_deleteCurrent() {
   auto *current_item = this->currentItem();
   if (current_item == nullptr) {
 	return;
@@ -113,23 +96,27 @@ void InputWidget::_deleteCurrent() {
 	delete current_item;
   }
 
-  if (complete_ && this->model()->rowCount() == 0) {
-	complete_ = false;
-	emit this->completeChanged();
+  if (images_available_ && this->model()->rowCount() == 0) {
+	images_available_ = false;
+	emit this->fileAvailabilityChanged();
   }
 
-  emit this->samplesChanged();
+  emit this->filesChanged();
 }
 
-void InputWidget::mouseDoubleClickEvent(QMouseEvent *) {
-  const QString filter = QString("Frames (*.%1)").arg(supported_format_.join(" *."));
+void FileList::mouseDoubleClickEvent(QMouseEvent *) {
+  const QString filter = QString("Supported files (*.%1)").arg(supported_format_.join(" *."));
   for (auto &file : QFileDialog::getOpenFileNames(
 	  this,
-	  "Select one or more frames to open",
+	  "Select one or more files to open",
 	  QString(),
 	  filter)) {
 	this->_addPath(file);
   }
+}
+
+bool FileList::filesAvailable() const {
+  return images_available_;
 }
 
 }

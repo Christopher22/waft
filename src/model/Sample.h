@@ -12,10 +12,17 @@
 #include <QTextStream>
 #include <QDir>
 
+#include <array>
+
 namespace waft::model {
 class Sample {
  public:
+  static constexpr QChar SEPARATOR = '\t';
+  static constexpr std::array<QStringView, 6> HEADERS = {u"file", u"x", u"y", u"major", u"minor", u"rotation"};
+
   explicit Sample(const QString &path);
+  static Sample parse(const QString &input_line, const QDir &relative_path = QDir());
+
   explicit operator bool() const;
   void write(QTextStream &stream, const QDir &relative_path) const;
   static void writeHeader(QTextStream &stream);
@@ -39,6 +46,8 @@ class Sample {
   }
 
  private:
+  Sample();
+
   QFileInfo path_;
   QPixmap image_;
   Ellipse ellipse_;

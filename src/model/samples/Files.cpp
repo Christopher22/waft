@@ -12,7 +12,7 @@ Files::Files(QObject *parent) : Samples(parent), QStringList() {
 
 }
 
-void Files::load() {
+bool Files::load() {
   for (auto &image_path: *this) {
 	Sample sample(image_path);
 	if (sample) {
@@ -22,6 +22,7 @@ void Files::load() {
 	}
   }
   emit this->done();
+  return true;
 }
 
 }

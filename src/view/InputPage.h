@@ -12,7 +12,9 @@
 class QThread;
 
 namespace waft::view {
-class InputWidget;
+namespace inputs {
+class Input;
+}
 
 class InputPage : public QWizardPage {
  Q_OBJECT
@@ -38,7 +40,7 @@ class InputPage : public QWizardPage {
   void _onDone();
   void _cleanWorker();
 
-  InputWidget *main_widget_;
+  inputs::Input *main_widget_;
   QThread *worker_;
   QVector<int> annotation_page_indices_;
 };

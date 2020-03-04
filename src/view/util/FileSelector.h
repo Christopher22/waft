@@ -6,8 +6,9 @@
 #define ROIWIZ_SRC_VIEW_UTIL_FILESELECTOR_H_
 
 #include <QWidget>
-#include <QComboBox>
 #include <QFileDialog>
+
+class QComboBox;
 
 namespace waft::view::util {
 class FileSelector : public QWidget {
@@ -34,7 +35,7 @@ class FileSelector : public QWidget {
   QFileDialog::Options *operator->();
 
  signals:
-  void pathSelected(QString path);
+  void pathSelected(const QString &path);
 
  private:
   void _selectPath();

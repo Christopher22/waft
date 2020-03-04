@@ -3,7 +3,12 @@
 //
 
 #include "InputPage.h"
-#include "InputWidget.h"
+#include "../model/Samples.h"
+#include "util/FileList.h"
+#include "inputs/Input.h"
+#include "inputs/MultiInput.h"
+#include "inputs/Images.h"
+#include "inputs/Tsv.h"
 #include "AnnotationPage.h"
 #include "OutputPage.h"
 
@@ -14,13 +19,19 @@
 
 namespace waft::view {
 
-InputPage::InputPage(QWidget *parent) : QWizardPage(parent), main_widget_(new InputWidget(this)), worker_(nullptr) {
+InputPage::InputPage(QWidget *parent)
+	: QWizardPage(parent),
+	  main_widget_(new inputs::MultiInput({new inputs::Images(), new inputs::Tsv()}, this)),
+	  worker_(nullptr) {
   this->setTitle("Please specify the input data");
   this->setCommitPage(true);
 
   // Redirect the signal
-  QObject::connect(main_widget_, &InputWidget::completeChanged, this, &InputPage::_onDataAvailabilityChanged);
-  QObject::connect(main_widget_, &InputWidget::samplesChanged, this, &InputPage::_onSamplesChanged);
+  QObject::connect(main_widget_,
+				   &inputs::Input::imageAvailabilityChanged,
+				   this,
+				   &InputPage::_onDataAvailabilityChanged);
+  QObject::connect(main_widget_, &inputs::Input::imagesChanged, this, &InputPage::_onSamplesChanged);
 
   auto *layout = new QVBoxLayout();
   layout->addWidget(main_widget_);
@@ -61,7 +72,7 @@ int InputPage::nextId() const {
 }
 
 void InputPage::_loadData() {
-  Q_ASSERT(main_widget_->isComplete());
+  Q_ASSERT(main_widget_->isReady());
   Q_ASSERT(worker_ == nullptr);
 
   QAbstractButton *button = this->wizard()->button(QWizard::CustomButton1);
@@ -83,7 +94,7 @@ void InputPage::_loadData() {
 }
 
 void InputPage::_onDataAvailabilityChanged() {
-  this->wizard()->button(QWizard::CustomButton1)->setEnabled(main_widget_->isComplete());
+  this->wizard()->button(QWizard::CustomButton1)->setEnabled(main_widget_->isReady());
 }
 
 void InputPage::_onLoadedSample(const model::Sample &sample) {
@@ -137,7 +148,7 @@ void InputPage::_onSamplesChanged() {
   annotation_page_indices_.clear();
 
   QAbstractButton *button = this->wizard()->button(QWizard::CustomButton1);
-  button->setEnabled(main_widget_->isComplete());
+  button->setEnabled(main_widget_->isReady());
   button->setText("Load samples");
 
   emit this->completeChanged();

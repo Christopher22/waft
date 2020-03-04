@@ -5,7 +5,6 @@
 #ifndef WAFT_SRC_MODEL_SAMPLES_H_
 #define WAFT_SRC_MODEL_SAMPLES_H_
 
-#include "Ellipse.h"
 #include "Sample.h"
 
 #include <QObject>
@@ -17,7 +16,7 @@ class Samples : public QObject {
 
  public:
   explicit Samples(QObject *parent = nullptr) : QObject(parent) {};
-  virtual void load() = 0;
+  virtual bool load() = 0;
 
   static QStringList supportedFormats();
 
