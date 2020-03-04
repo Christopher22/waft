@@ -18,12 +18,14 @@ namespace waft::view {
 OutputPage::OutputPage(QWidget *parent)
 	: QWizardPage(parent),
 	  QVector<AnnotationPage *>(),
-	  file_(new util::FileSelector("Please select the output file",
-								   "Tab-separated values (*.tsv)",
+	  file_(new util::FileSelector(tr("Please select the output file"),
+								   tr("Annotation (*.tsv)"),
 								   true,
 								   QString(),
 								   this)) {
-  this->setTitle("Please specify the output file");
+  this->setTitle(tr("Define output"));
+  this->setSubTitle(tr(
+	  "Please specify the file the annotated pupils are saved in. If choosing an existing file, you may overwrite it or append the new annotations."));
   this->setFinalPage(true);
   this->registerField("output_file*", file_, "path", SIGNAL(pathSelected(QString)));
 
@@ -41,8 +43,8 @@ int OutputPage::nextId() const {
 bool OutputPage::validatePage() {
   QFile data(file_->path());
   const bool should_append = data.exists() && QMessageBox::question(this,
-																	"File already exists",
-																	"The selected file does already exist. Do you want to append the data? Otherwise, it is overwritten!",
+																	tr("File already exists"),
+																	tr("The selected file does already exist. Do you want to append the data? Otherwise, it is overwritten!"),
 																	QMessageBox::StandardButtons(
 																		QMessageBox::Yes | QMessageBox::No),
 																	QMessageBox::Yes) == QMessageBox::Yes;
@@ -50,8 +52,8 @@ bool OutputPage::validatePage() {
   // Define if existing file should be overwritten
   if (!data.open(QFile::WriteOnly | (should_append ? QFile::Append : QFile::Truncate))) {
 	QMessageBox::warning(this,
-						 "Opening file failed",
-						 "Opening the selected file failed. Do you have the required rights?");
+						 tr("Opening file failed"),
+						 tr("Opening the selected file failed. Do you have the required rights?"));
 	return false;
   }
 

@@ -11,6 +11,7 @@ namespace waft::view {
 class Wizard : public QWizard {
  public:
   explicit Wizard(QWidget *parent = nullptr);
+  static Qt::WindowFlags flags();
 };
 }
 

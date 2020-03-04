@@ -19,7 +19,7 @@ FileSelector::FileSelector(QString description, QString filter, bool for_saving,
 	  filter_(std::move(filter)),
 	  for_saving_(for_saving) {
   path_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-  path_->addItem("Please select a file");
+  path_->addItem(tr("Please select a file"));
   QObject::connect(path_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FileSelector::_onSelectionChange);
 
   auto *selector = new QPushButton(this);

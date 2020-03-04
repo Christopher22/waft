@@ -16,7 +16,11 @@ AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
 	  sample_(sample),
 	  annotation_widget_(new AnnotationWidget(sample, this)),
 	  next_id_(std::numeric_limits<int>::min()) {
-  this->setTitle(QString("Please annotate '%1': ").arg(sample.file().fileName()));
+  this->setTitle(tr("Annotation of '%1'").arg(sample.file().fileName()));
+  this->setSubTitle(tr(
+	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Use your mouse wheel to rotate. Using %1 mouse wheel will scale the mayor axis, while utilize %2 mouse wheel will scale the minor one.")
+						.arg(QKeySequence(Qt::SHIFT).toString(QKeySequence::NativeText),
+							 QKeySequence(Qt::CTRL).toString(QKeySequence::NativeText)));
 
   auto *layout = new QVBoxLayout(this);
   layout->addWidget(annotation_widget_);

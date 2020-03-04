@@ -25,7 +25,7 @@ Images::Images(QWidget *widget)
 }
 
 QString Images::inputName() const {
-  return tr("Images: ");
+  return tr("Frames: ");
 }
 
 bool Images::isReady() const {

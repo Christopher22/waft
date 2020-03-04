@@ -23,7 +23,9 @@ InputPage::InputPage(QWidget *parent)
 	: QWizardPage(parent),
 	  main_widget_(new inputs::MultiInput({new inputs::Images(), new inputs::Tsv()}, this)),
 	  worker_(nullptr) {
-  this->setTitle("Please specify the input data");
+  this->setTitle(tr("Define input"));
+  this->setSubTitle(
+	  tr("Please specify if you rather want to annotate new frames or open existing annotations. Afterward, click 'Load samples' and 'Commit' to proceed."));
   this->setCommitPage(true);
 
   // Redirect the signal
@@ -48,7 +50,7 @@ void InputPage::initializePage() {
   QAbstractButton *button = this->wizard()->button(QWizard::CustomButton1);
   button->setVisible(true);
   button->setEnabled(false);
-  this->setButtonText(QWizard::CustomButton1, "Load samples");
+  this->setButtonText(QWizard::CustomButton1, tr("Load samples"));
   QObject::connect(button, &QAbstractButton::clicked, this, &InputPage::_loadData);
 }
 
@@ -77,7 +79,7 @@ void InputPage::_loadData() {
 
   QAbstractButton *button = this->wizard()->button(QWizard::CustomButton1);
   button->setEnabled(false);
-  button->setText("Loading samples...");
+  button->setText(tr("Loading samples..."));
   main_widget_->setEnabled(false);
 
   // Create the sample loader
@@ -103,13 +105,13 @@ void InputPage::_onLoadedSample(const model::Sample &sample) {
 
 void InputPage::_onFailedSample(const model::Sample &sample) {
   QMessageBox::warning(this,
-					   "Unable to load sample",
-					   QString("An error occurred while trying to load '%1'.").arg(sample.file().absoluteFilePath()));
+					   tr("Unable to load sample"),
+					   tr("An error occurred while trying to load '%1'.").arg(sample.file().absoluteFilePath()));
 }
 
 void InputPage::_onDone() {
   this->_cleanWorker();
-  this->setButtonText(QWizard::CustomButton1, "Samples loaded");
+  this->setButtonText(QWizard::CustomButton1, tr("Samples loaded"));
   main_widget_->setEnabled(true);
   if (!annotation_page_indices_.empty()) {
 	auto *output = qobject_cast<OutputPage *>(this->wizard()->page(QWizardPage::nextId()));
@@ -149,7 +151,7 @@ void InputPage::_onSamplesChanged() {
 
   QAbstractButton *button = this->wizard()->button(QWizard::CustomButton1);
   button->setEnabled(main_widget_->isReady());
-  button->setText("Load samples");
+  button->setText(tr("Load samples"));
 
   emit this->completeChanged();
 }
