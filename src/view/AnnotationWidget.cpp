@@ -20,15 +20,17 @@ AnnotationWidget::AnnotationWidget(model::Sample sample, QWidget *parent) : QLab
 
   this->setScaledContents(true);
   this->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-  this->setMinimumSize(sample.frame().size());
-  this->setPixmap(sample.frame());
+  this->setMinimumSize(sample_.frame().size());
+  this->setPixmap(sample_.frame());
 
   minor_pen_.setStyle(Qt::DashLine);
 }
 
 void AnnotationWidget::paintEvent(QPaintEvent *event) {
   QLabel::paintEvent(event);
-  sample_.ellipse().draw(this, ellipse_pen_, major_pen_, minor_pen_);
+  if (sample_.isMeaningful()) {
+	sample_.ellipse().draw(this, ellipse_pen_, major_pen_, minor_pen_);
+  }
 }
 
 void AnnotationWidget::mousePressEvent(QMouseEvent *ev) {
@@ -42,6 +44,11 @@ void AnnotationWidget::mouseMoveEvent(QMouseEvent *ev) {
 }
 
 void AnnotationWidget::_handleMouse(QMouseEvent *event) {
+  if (!sample_.isMeaningful()) {
+	event->ignore();
+	return;
+  }
+
   const QPointF local_pos = event->localPos();
   sample_.ellipse().setPosition(float(local_pos.x()) / float(this->width()),
 								float(local_pos.y()) / float(this->height()));
@@ -49,6 +56,11 @@ void AnnotationWidget::_handleMouse(QMouseEvent *event) {
 }
 
 void AnnotationWidget::wheelEvent(QWheelEvent *event) {
+  if (!sample_.isMeaningful()) {
+	event->ignore();
+	return;
+  }
+
   const QPoint num_pixels = event->pixelDelta();
   const int change = !num_pixels.isNull() ? num_pixels.y() : (event->angleDelta() / 120).y();
   const Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();

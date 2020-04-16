@@ -17,7 +17,6 @@ list(TRANSFORM Qt5_Components PREPEND "Qt5::")
 add_library(waft_src src/model/Ellipse.cpp src/model/Ellipse.h src/view/AnnotationWidget.cpp src/view/AnnotationWidget.h src/model/Samples.h src/model/samples/Files.cpp src/model/samples/Files.h src/model/Sample.cpp src/model/Sample.h src/view/util/FileList.cpp src/view/util/FileList.h src/model/Samples.cpp src/view/InputPage.cpp src/view/InputPage.h src/view/Wizard.cpp src/view/Wizard.h src/view/AnnotationPage.cpp src/view/AnnotationPage.h src/view/OutputPage.cpp src/view/OutputPage.h src/view/util/FileSelector.h src/view/util/FileSelector.cpp src/model/samples/SavedAnnotations.cpp src/model/samples/SavedAnnotations.h src/view/inputs/Tsv.cpp src/view/inputs/Tsv.h src/view/inputs/Input.h src/view/inputs/MultiInput.cpp src/view/inputs/MultiInput.h src/view/inputs/Images.cpp src/view/inputs/Images.h src/view/util/AspectRatioWidget.cpp src/view/util/AspectRatioWidget.h)
 target_link_libraries(waft_src ${Qt5_Components})
 
-set(BUILD_TESTING ON)
 if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     MESSAGE(STATUS "Build tests")
     add_executable(waft src/main.cpp src/Tests.cpp src/Tests.h)

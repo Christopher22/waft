@@ -14,7 +14,10 @@ class AnnotationWidget : public QLabel {
 
  public:
   explicit AnnotationWidget(model::Sample sample, QWidget *parent = nullptr);
-  [[nodiscard]] const model::Sample &sample() const {
+  [[nodiscard]] const model::Sample &sample() const noexcept {
+	return sample_;
+  }
+  [[nodiscard]] model::Sample &sample() noexcept {
 	return sample_;
   }
 

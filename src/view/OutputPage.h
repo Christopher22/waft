@@ -8,6 +8,7 @@
 #include <QWizardPage>
 #include <QVector>
 
+class QCheckBox;
 namespace waft::view {
 class AnnotationPage;
 namespace util {
@@ -22,8 +23,10 @@ class OutputPage : public QWizardPage, public QVector<AnnotationPage *> {
   bool validatePage() override;
   [[nodiscard]] int nextId() const override;
   void initializePage() override;
+
  private:
   util::FileSelector *file_;
+  QCheckBox *include_excluded_;
 };
 }
 

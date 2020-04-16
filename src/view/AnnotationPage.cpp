@@ -8,7 +8,8 @@
 
 #include <QVBoxLayout>
 #include <QKeyEvent>
-#include <QDebug>
+#include <QAbstractButton>
+#include <QCheckBox>
 
 #include <limits>
 
@@ -16,8 +17,7 @@ namespace waft::view {
 
 AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
 	: QWizardPage(parent),
-	  sample_(sample),
-	  annotation_widget_(new util::AspectRatioWidget(new AnnotationWidget(sample, this), this)),
+	  annotation_widget_(new AnnotationWidget(sample, this)),
 	  next_id_(std::numeric_limits<int>::min()) {
   this->setTitle(tr("Annotation of '%1'").arg(sample.file().fileName()));
   this->setSubTitle(tr(
@@ -26,7 +26,7 @@ AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
 							 QKeySequence(Qt::CTRL).toString(QKeySequence::NativeText)));
 
   auto *layout = new QVBoxLayout(this);
-  layout->addWidget(annotation_widget_);
+  layout->addWidget(new util::AspectRatioWidget(annotation_widget_, this));
   this->setLayout(layout);
 }
 
@@ -37,6 +37,16 @@ void AnnotationPage::initializePage() {
   if (next_id_ == std::numeric_limits<int>::min()) {
 	next_id_ = QWizardPage::nextId();
   }
+
+  // There is no way detecting the page was accessed using a back button. Listen for id change.
+  QObject::connect(this->wizard(), &QWizard::currentIdChanged, this, [&](int id) {
+	if (this == this->wizard()->page(id)) {
+	  this->_prepare();
+	}
+  });
+
+  // Prepare the check box on the first time
+  this->_prepare();
 }
 
 int AnnotationPage::nextId() const {
@@ -49,7 +59,37 @@ void AnnotationPage::setNextId(int id) {
 }
 
 const model::Sample &AnnotationPage::sample() const {
-  return qobject_cast<AnnotationWidget *>(annotation_widget_->child())->sample();
+  return annotation_widget_->sample();
+}
+
+void AnnotationPage::cleanupPage() {
+  this->_cleanUp();
+  QWizardPage::cleanupPage();
+}
+
+bool AnnotationPage::validatePage() {
+  this->_cleanUp();
+  return QWizardPage::validatePage();
+}
+
+QCheckBox *AnnotationPage::checkbox() noexcept {
+  return qobject_cast<QCheckBox *>(this->wizard()->button(QWizard::CustomButton2));;
+}
+
+void AnnotationPage::_cleanUp() {
+  auto *checkbox = this->checkbox();
+  QObject::disconnect(checkbox, nullptr, this, nullptr);
+  checkbox->setVisible(false);
+}
+
+void AnnotationPage::_prepare() {
+  auto *checkbox = this->checkbox();
+  checkbox->setChecked(this->sample().isMeaningful());
+  QObject::connect(checkbox, &QCheckBox::stateChanged, this, [&](int state) {
+	annotation_widget_->sample().setMeaningful(state == Qt::Checked);
+	annotation_widget_->update();
+  });
+  checkbox->setVisible(true);
 }
 
 }

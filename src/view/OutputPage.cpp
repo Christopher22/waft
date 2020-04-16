@@ -8,10 +8,10 @@
 #include "../model/Samples.h"
 
 #include <QVBoxLayout>
-#include <QFile>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QFileDialog>
+#include <QCheckBox>
 
 namespace waft::view {
 
@@ -22,7 +22,8 @@ OutputPage::OutputPage(QWidget *parent)
 								   tr("Annotation (*.tsv)"),
 								   true,
 								   QString(),
-								   this)) {
+								   this)),
+	  include_excluded_(new QCheckBox(tr("Include unannotated samples"), this)) {
   this->setTitle(tr("Define output"));
   this->setSubTitle(tr(
 	  "Please specify the file the annotated pupils are saved in. If choosing an existing file, you may overwrite it or append the new annotations."));
@@ -33,6 +34,7 @@ OutputPage::OutputPage(QWidget *parent)
 
   auto *layout = new QVBoxLayout(this);
   layout->addWidget(file_);
+  layout->addWidget(include_excluded_);
   this->setLayout(layout);
 }
 
@@ -64,8 +66,11 @@ bool OutputPage::validatePage() {
   }
 
   // Write the ellipses
+  const QDir directory = QFileInfo(file_->path()).dir();
   for (auto page: *this) {
-	const QDir directory = QFileInfo(file_->path()).dir();
+	if (!page->sample().isMeaningful() && !include_excluded_->isChecked()) {
+	  continue;
+	}
 	page->sample().write(stream, directory);
   }
 

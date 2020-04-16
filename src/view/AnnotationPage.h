@@ -8,11 +8,9 @@
 #include "../model/Sample.h"
 #include <QWizardPage>
 
-namespace waft::view {
-namespace util {
-class AspectRatioWidget;
-}
+class QCheckBox;
 
+namespace waft::view {
 class AnnotationWidget;
 class AnnotationPage : public QWizardPage {
  Q_OBJECT
@@ -24,10 +22,15 @@ class AnnotationPage : public QWizardPage {
 
   [[nodiscard]] int nextId() const override;
   void initializePage() override;
+  void cleanupPage() override;
+  bool validatePage() override;
 
  private:
-  model::Sample sample_;
-  util::AspectRatioWidget *annotation_widget_;
+  QCheckBox *checkbox() noexcept;
+  void _cleanUp();
+  void _prepare();
+
+  AnnotationWidget *annotation_widget_;
   int next_id_;
 };
 }
