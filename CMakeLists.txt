@@ -27,10 +27,9 @@ IF (WIN32)
             COMMAND "${CMAKE_COMMAND}" -E
             env PATH="${Qt_Bin_Dir}" "${Win_Deploy_Executable}"
             --verbose 0
-            --no-compiler-runtime
+            $<$<CONFIG:Debug>:--no-compiler-runtime>
             $<IF:$<CONFIG:Debug>,--debug,--release>
             \"$<TARGET_FILE:waft>\"
             COMMENT "Deploying Qt..."
             )
-
 endif ()
