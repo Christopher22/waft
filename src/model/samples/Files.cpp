@@ -16,6 +16,7 @@ bool Files::load() {
   for (auto &image_path: *this) {
 	Sample sample(image_path);
 	if (sample) {
+	  sample.setMeaningful(true);
 	  emit this->loaded(sample);
 	} else {
 	  emit this->failure(sample);

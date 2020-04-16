@@ -12,7 +12,6 @@ Sample::Sample() : path_(), image_(), ellipse_(), include_(false) {
 }
 
 Sample::Sample(const QString &path) : path_(path), image_(path), ellipse_(), include_(false) {
-
 }
 
 Sample Sample::parse(const QString &input_line, const QDir &relative_path) {
@@ -33,7 +32,7 @@ Sample Sample::parse(const QString &input_line, const QDir &relative_path) {
 
   // Create a default sample which should not be included by default
   Sample sample(file_name);
-  if (line.size() == Sample::HEADERS.size()) {
+  if (line.size() >= Sample::HEADERS.size()) {
 	// Parse the floats
 	QVector<float> ellipse_data(Sample::HEADERS.size() - 1);
 	bool is_ok = true;
@@ -62,8 +61,9 @@ void Sample::write(QTextStream &stream, const QDir &parent) const {
   if (include_) {
 	const QPointF axes = this->ellipse_.axes(), position = this->ellipse_.position();
 	stream << '\t' << position.x() << '\t' << position.y() << '\t' << axes.x() << '\t'
-		   << axes.y() << "\t" << this->ellipse_.rotation() << '\n';
+		   << axes.y() << "\t" << this->ellipse_.rotation();
   }
+  stream << '\n';
 }
 
 QTextStream &operator<<(QTextStream &stream, const Sample &sample) {
