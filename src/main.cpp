@@ -1,3 +1,4 @@
+#ifndef BUILD_TESTING
 #include "view/Wizard.h"
 
 #include <QApplication>
@@ -16,3 +17,7 @@ int main(int argc, char **argv) {
 
   return QApplication::exec();
 }
+#else
+#include "Tests.h"
+QTEST_MAIN(Tests)
+#endif
