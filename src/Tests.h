@@ -9,6 +9,12 @@
 
 class Tests : public QObject {
  Q_OBJECT
+
+ public:
+  Tests() : QObject(nullptr) {}
+
+ private slots:
+  void testParsing();
 };
 
 #endif //WAFT_SRC_TESTS_H_

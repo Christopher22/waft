@@ -26,8 +26,11 @@ class Sample {
   explicit operator bool() const;
   void write(QTextStream &stream, const QDir &relative_path) const;
   static void writeHeader(QTextStream &stream);
-
   friend QTextStream &operator<<(QTextStream &stream, const Sample &sample);
+
+  void setMeaningful(bool meaningful) noexcept {
+	include_ = meaningful;
+  }
 
   [[nodiscard]] inline const QFileInfo &file() const noexcept {
 	return path_;
@@ -35,6 +38,10 @@ class Sample {
 
   [[nodiscard]] inline const QPixmap &frame() const noexcept {
 	return image_;
+  }
+
+  [[nodiscard]] inline bool isMeaningful() const noexcept {
+	return include_;
   }
 
   [[nodiscard]] inline const Ellipse &ellipse() const noexcept {
@@ -51,6 +58,7 @@ class Sample {
   QFileInfo path_;
   QPixmap image_;
   Ellipse ellipse_;
+  bool include_;
 };
 }
 
