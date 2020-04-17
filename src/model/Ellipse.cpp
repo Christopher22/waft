@@ -21,13 +21,13 @@ void Ellipse::setAxes(float mayor, float minor) noexcept {
   mayor_ = mayor;
   minor_ = minor;
   if (minor_ > mayor_) {
-	std::swap(minor_, mayor_);
+    std::swap(minor_, mayor_);
   }
 }
 
 bool Ellipse::setPosition(float x, float y) noexcept {
   if (x < 0 || x > 1 || y < 0 || y > 1) {
-	return false;
+    return false;
   }
   x_ = x;
   y_ = y;
@@ -35,17 +35,16 @@ bool Ellipse::setPosition(float x, float y) noexcept {
 }
 
 bool Ellipse::setRotation(float rotation) noexcept {
-  if (rotation < 0 || rotation > 360) {
-	return false;
-  }
-  rotation_ = rotation;
+  rotation_ = fmod(rotation, 360);
+  if (rotation_ < 0)
+    rotation_ += 360;
   return true;
 }
 
 void Ellipse::draw(QPaintDevice *painting_area,
-				   const QPen &pen,
-				   const QPen &major_pen,
-				   const QPen &minor_pen) const {
+                   const QPen &pen,
+                   const QPen &major_pen,
+                   const QPen &minor_pen) const {
   QPainter painter(painting_area);
   painter.setPen(pen);
   painter.setRenderHint(QPainter::Antialiasing);
@@ -62,9 +61,9 @@ void Ellipse::draw(QPaintDevice *painting_area,
   painter.translate(-x, -y);
 
   painter.drawEllipse(x - mayor_size,
-					  y - minor_size,
-					  mayor_size * 2,
-					  minor_size * 2);
+                      y - minor_size,
+                      mayor_size * 2,
+                      minor_size * 2);
 
   painter.setPen(major_pen);
   painter.drawLine(x, y, x + mayor_size, y);
