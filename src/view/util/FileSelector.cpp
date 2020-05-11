@@ -8,6 +8,8 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QFileDialog>
+#include <QDragEnterEvent>
+#include <QMimeData>
 
 namespace waft::view::util {
 
@@ -18,6 +20,9 @@ FileSelector::FileSelector(QString description, QString filter, bool for_saving,
 	  description_(std::move(description)),
 	  filter_(std::move(filter)),
 	  for_saving_(for_saving) {
+
+  this->setAcceptDrops(true);
+
   path_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
   path_->addItem(tr("Please select a file"));
   QObject::connect(path_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &FileSelector::_onSelectionChange);
@@ -77,6 +82,25 @@ void FileSelector::setRoot(const QString &root) {
 
 QFileDialog::Options *FileSelector::operator->() {
   return &options_;
+}
+
+void FileSelector::dragEnterEvent(QDragEnterEvent *event) {
+  if (event->mimeData()->hasUrls()) {
+	event->acceptProposedAction();
+  }
+}
+
+void FileSelector::dropEvent(QDropEvent *event) {
+  if (event->mimeData()->hasUrls()) {
+	const auto urls = event->mimeData()->urls();
+	if (urls.size() == 1) {
+	  const QFileInfo local_file(urls[0].toLocalFile());
+	  if (local_file.isFile()) {
+		this->setPath(local_file.absoluteFilePath());
+		event->acceptProposedAction();
+	  }
+	}
+  }
 }
 
 }

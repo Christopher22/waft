@@ -37,6 +37,10 @@ class FileSelector : public QWidget {
  signals:
   void pathSelected(const QString &path);
 
+ protected:
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dropEvent(QDropEvent *event) override;
+
  private:
   void _selectPath();
   void _onSelectionChange(int index);
