@@ -16,7 +16,7 @@ class AnnotationPage : public QWizardPage {
  Q_OBJECT
 
  public:
-  explicit AnnotationPage(const model::Sample &sample, QWidget *parent = nullptr);
+  explicit AnnotationPage(const model::Sample &sample, int annotation_index, QWidget *parent = nullptr);
   void setNextId(int id);
   [[nodiscard]] const model::Sample &sample() const;
 
@@ -31,7 +31,7 @@ class AnnotationPage : public QWizardPage {
   void _prepare();
 
   AnnotationWidget *annotation_widget_;
-  int next_id_;
+  int next_id_, annotation_index_;
 };
 }
 

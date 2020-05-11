@@ -103,7 +103,9 @@ void InputPage::_onDataAvailabilityChanged() {
 }
 
 void InputPage::_onLoadedSample(const model::Sample &sample) {
-  annotation_page_indices_.append(this->wizard()->addPage(new AnnotationPage(sample, this)));
+  const auto index = annotation_page_indices_.size();
+  annotation_page_indices_
+	  .append(this->wizard()->addPage(new AnnotationPage(sample, index, this)));
 }
 
 void InputPage::_onFailedSample(const model::Sample &sample) {

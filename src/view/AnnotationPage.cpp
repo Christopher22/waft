@@ -12,14 +12,15 @@
 #include <QCheckBox>
 
 #include <limits>
+#include <algorithm>
 
 namespace waft::view {
 
-AnnotationPage::AnnotationPage(const model::Sample &sample, QWidget *parent)
+AnnotationPage::AnnotationPage(const model::Sample &sample, int annotation_index, QWidget *parent)
 	: QWizardPage(parent),
 	  annotation_widget_(new AnnotationWidget(sample, this)),
-	  next_id_(std::numeric_limits<int>::min()) {
-  this->setTitle(tr("Annotation of '%1'").arg(sample.file().fileName()));
+	  next_id_(std::numeric_limits<int>::min()),
+	  annotation_index_(annotation_index) {
   this->setSubTitle(tr(
 	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Use your mouse wheel to rotate. Using %1 mouse wheel will scale the mayor axis, while utilize %2 mouse wheel will scale the minor one.")
 						.arg(QKeySequence(Qt::SHIFT).toString(QKeySequence::NativeText),
@@ -37,6 +38,15 @@ void AnnotationPage::initializePage() {
   if (next_id_ == std::numeric_limits<int>::min()) {
 	next_id_ = QWizardPage::nextId();
   }
+
+  // At this point in time, all annotation pages are created. We may therefore create the progress indicator now
+  const QString total_number =
+	  QString::number(this->parent()->findChildren<AnnotationPage *>(QString(), Qt::FindDirectChildrenOnly).size());
+  this->setTitle(tr("Annotation of '%1' (Frame %2 of %3)").arg(
+	  annotation_widget_->sample().file().fileName(),
+	  QString::number(annotation_index_ + 1).rightJustified(total_number.size(), '0'),
+	  total_number
+  ));
 
   // There is no way detecting the page was accessed using a back button. Listen for id change.
   QObject::connect(this->wizard(), &QWizard::currentIdChanged, this, [&](int id) {
