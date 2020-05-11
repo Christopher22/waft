@@ -63,7 +63,7 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
 
   const QPoint num_pixels = event->pixelDelta();
   const int change = !num_pixels.isNull() ? num_pixels.y() : (event->angleDelta() / 120).y();
-  const Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
+  const Qt::KeyboardModifiers modifiers = QGuiApplication::queryKeyboardModifiers();
 
   if (modifiers.testFlag(Qt::ShiftModifier) || modifiers.testFlag(Qt::ControlModifier)) {
 	QPointF axes = sample_.ellipse().axes();

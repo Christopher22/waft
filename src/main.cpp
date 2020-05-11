@@ -6,7 +6,7 @@
 int main(int argc, char **argv) {
   QApplication application(argc, argv);
   QApplication::setApplicationName("waft");
-  QApplication::setApplicationVersion("0.2.0.0");
+  QApplication::setApplicationVersion("0.2.0.1");
   QApplication::setOrganizationName("mindQ");
 
   auto *wizard = new waft::view::Wizard();
