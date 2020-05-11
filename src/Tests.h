@@ -15,6 +15,7 @@ class Tests : public QObject {
 
  private slots:
   void testParsing();
+  void testEllipse();
 };
 
 #endif //WAFT_SRC_TESTS_H_

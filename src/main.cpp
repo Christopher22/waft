@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 
   auto *wizard = new waft::view::Wizard();
   QObject::connect(wizard, &waft::view::Wizard::finished, wizard, [wizard](int) {
-	wizard->deleteLater();
+    wizard->deleteLater();
   });
   wizard->show();
 
