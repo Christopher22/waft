@@ -89,6 +89,13 @@ void OutputPage::initializePage() {
   if (!this->empty()) {
 	file_->setRoot((*this)[0]->sample().file().dir().absolutePath());
   }
+
+  // Enable cancel button
+  auto *cancel = this->wizard()->button(QWizard::CancelButton);
+  if (cancel != nullptr) {
+	cancel->setEnabled(true);
+	cancel->setVisible(true);
+  }
 }
 
 }

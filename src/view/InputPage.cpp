@@ -58,8 +58,13 @@ void InputPage::initializePage() {
   this->setButtonText(QWizard::CustomButton1, tr("Load samples"));
   QObject::connect(button, &QAbstractButton::clicked, this, &InputPage::_loadData);
 
-  // Hide the checkbox
+  // Hide the checkbox and enable cancel
   this->wizard()->button(QWizard::CustomButton2)->setVisible(false);
+  auto *cancel = this->wizard()->button(QWizard::CancelButton);
+  if (cancel != nullptr) {
+	cancel->setEnabled(true);
+	cancel->setVisible(true);
+  }
 }
 
 bool InputPage::validatePage() {

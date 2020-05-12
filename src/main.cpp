@@ -15,7 +15,7 @@ You should have received a copy of the GNU Affero General Public License along w
 int main(int argc, char **argv) {
   QApplication application(argc, argv);
   QApplication::setApplicationName("waft");
-  QApplication::setApplicationVersion("0.3.1.0");
+  QApplication::setApplicationVersion("0.3.2.0");
   QApplication::setOrganizationName("mindQ");
 
   auto *wizard = new waft::view::Wizard();

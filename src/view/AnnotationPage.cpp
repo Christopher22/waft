@@ -104,6 +104,13 @@ void AnnotationPage::_prepare() {
 	annotation_widget_->update();
   });
   checkbox->setVisible(true);
+
+  // Disable cancel button
+  auto *cancel = this->wizard()->button(QWizard::CancelButton);
+  if (cancel != nullptr) {
+	cancel->setEnabled(false);
+	cancel->setVisible(false);
+  }
 }
 
 }
