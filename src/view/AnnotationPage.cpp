@@ -27,9 +27,8 @@ AnnotationPage::AnnotationPage(const model::Sample &sample, int annotation_index
 	  next_id_(std::numeric_limits<int>::min()),
 	  annotation_index_(annotation_index) {
   this->setSubTitle(tr(
-	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Use your mouse wheel to rotate. Using %1 mouse wheel will scale the mayor axis, while utilize %2 mouse wheel will scale the minor one.")
-						.arg(QKeySequence(Qt::SHIFT).toString(QKeySequence::NativeText),
-							 QKeySequence(Qt::CTRL).toString(QKeySequence::NativeText)));
+	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Use your mouse wheel to rotate. Clicking the right mouse button will select the major or minor axis, respectively. Using %1 mouse wheel will scale the current axis, indicated by the green color.")
+						.arg(QKeySequence(Qt::CTRL).toString(QKeySequence::NativeText)));
 
   auto *layout = new QVBoxLayout(this);
   layout->addWidget(new util::AspectRatioWidget(annotation_widget_, this));

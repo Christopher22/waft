@@ -18,6 +18,11 @@ class AnnotationWidget : public QLabel {
  Q_OBJECT
 
  public:
+  enum class Axis {
+	Major,
+	Minor
+  };
+
   explicit AnnotationWidget(model::Sample sample, QWidget *parent = nullptr);
   [[nodiscard]] const model::Sample &sample() const noexcept {
 	return sample_;
@@ -26,6 +31,9 @@ class AnnotationWidget : public QLabel {
 	return sample_;
   }
 
+  [[nodiscard]] Axis currentAxis() const noexcept;
+  void setCurrentAxis(Axis axis);
+
  protected:
   void paintEvent(QPaintEvent *event) override;
   void mousePressEvent(QMouseEvent *ev) override;
@@ -33,10 +41,14 @@ class AnnotationWidget : public QLabel {
   void wheelEvent(QWheelEvent *event) override;
 
  private:
+  constexpr static QColor DEFAULT_COLOR = QColor(255, 59, 48);
+  constexpr static QColor SELECTION_COLOR = QColor(52, 199, 89);
+
   void _handleMouse(QMouseEvent *event);
 
   model::Sample sample_;
   QPen ellipse_pen_, major_pen_, minor_pen_;
+  Axis current_axis_;
 };
 }
 
