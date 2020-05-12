@@ -27,7 +27,7 @@ AnnotationPage::AnnotationPage(const model::Sample &sample, int annotation_index
 	  next_id_(std::numeric_limits<int>::min()),
 	  annotation_index_(annotation_index) {
   this->setSubTitle(tr(
-	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Use your mouse wheel to rotate. Clicking the right mouse button will select the major or minor axis, respectively. Using %1 mouse wheel will scale the current axis, indicated by the green color.")
+	  "Please annotate the pupil in the following frame. Click anywhere in the image to set the center of the ellipsis. Clicking the right mouse button will select the major or minor axis, respectively. Using the mouse wheel will scale the current axis, indicated by the green color. If %1 is hold down additionally, the ellipse is rotated.")
 						.arg(QKeySequence(Qt::CTRL).toString(QKeySequence::NativeText)));
 
   auto *layout = new QVBoxLayout(this);

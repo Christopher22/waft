@@ -76,6 +76,8 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
   const Qt::KeyboardModifiers modifiers = QGuiApplication::keyboardModifiers();
 
   if (modifiers.testFlag(Qt::ControlModifier)) {
+	sample_.ellipse().setRotation(sample_.ellipse().rotation() + float(change));
+  } else {
 	QPointF axes = sample_.ellipse().axes();
 	const QSize size = this->pixmap()->size();
 	const float reference = std::max(size.width(), size.height());
@@ -90,8 +92,6 @@ void AnnotationWidget::wheelEvent(QWheelEvent *event) {
 	}
 
 	sample_.ellipse().setAxes(axes);
-  } else {
-	sample_.ellipse().setRotation(sample_.ellipse().rotation() + float(change));
   }
 
   this->update();
