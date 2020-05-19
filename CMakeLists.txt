@@ -32,24 +32,38 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
     add_definitions(-DBUILD_TESTING)
     target_link_libraries(waft waft_src)
     add_test(NAME WaftTest COMMAND waft)
-else ()
-    add_executable(waft WIN32 src/main.cpp)
-    target_link_libraries(waft waft_src)
 endif ()
 
-IF (WIN32)
-    # On Windows, deploy all required DLLs automatically
-    get_target_property(QMake_Executable Qt5::qmake IMPORTED_LOCATION)
-    get_filename_component(Qt_Bin_Dir "${QMake_Executable}" DIRECTORY)
+# Set the platform-dependent flags
+if (WIN32)
+    set(Executable_Flags "WIN32")
+elseif (APPLE)
+    set(Executable_Flags "MACOSX_BUNDLE")
+endif ()
+
+add_executable(waft ${Executable_Flags} src/main.cpp)
+target_link_libraries(waft waft_src)
+
+# Deploy additional files on Windows and macOS
+get_target_property(QMake_Executable Qt5::qmake IMPORTED_LOCATION)
+get_filename_component(Qt_Bin_Dir "${QMake_Executable}" DIRECTORY)
+if (WIN32)
     find_program(Win_Deploy_Executable windeployqt HINTS "${Qt_Bin_Dir}")
 
     add_custom_command(TARGET waft POST_BUILD
             COMMAND "${CMAKE_COMMAND}" -E
             env PATH="${Qt_Bin_Dir}" "${Win_Deploy_Executable}"
-            --verbose 0
+            --verbose 1
             $<$<CONFIG:Debug>:--no-compiler-runtime>
             $<IF:$<CONFIG:Debug>,--debug,--release>
             \"$<TARGET_FILE:waft>\"
-            COMMENT "Deploying Qt..."
+            COMMENT "Deploying Qt for Microsoft Windows..."
+            )
+elseif (APPLE)
+    find_program(Mac_Deploy_Executable macdeployqt HINTS "${Qt_Bin_Dir}")
+
+    add_custom_command(TARGET waft POST_BUILD
+            COMMAND "${Mac_Deploy_Executable}" "$<TARGET_FILE_DIR:waft>/../.." -always-overwrite
+            COMMENT "Deploying Qt for macOS..."
             )
 endif ()
